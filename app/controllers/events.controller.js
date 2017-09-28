@@ -3,7 +3,9 @@ const Event = require('../models/event');
 module.exports = {
     showEvents: showEvents,
     showSingle: showSingle,
-    seedEvents: seedEvents
+    seedEvents: seedEvents,
+    showCreate: showCreate,
+    processCreate: processCreate
 }
 
 /**
@@ -34,13 +36,6 @@ function showEvents(req, res) {
  * @param {response} res 
  */
 function showSingle(req, res) {
-    // get a single event
-    const event = {
-        name: 'Basketball',
-        slug: 'basketball',
-        description: 'Throwing into a basket.'
-    };
-
     Event.findOne({slug: req.params.slug}, (err, event) => {
         // error found
         if(err) {
@@ -78,6 +73,10 @@ function seedEvents(req, res) {
         {
             name: 'Ping Pong',
             description: 'Super fast paddles'
+        },
+        {
+            name: 'Volleyball',
+            description: 'Heroes of pipes'
         }
     ];
 
@@ -92,4 +91,35 @@ function seedEvents(req, res) {
 
     // seeded!
     res.send('Database seeded!');
+}
+
+/**
+ * Show form to create events
+ * @param {request} req 
+ * @param {response} res 
+ */
+function showCreate(req, res) {
+    res.render('pages/create');
+}
+
+/**
+ * Process the creation form
+ * @param {*} req 
+ * @param {*} res 
+ */
+function processCreate(req, res) {
+    const event = new Event({
+        name: req.body.name,
+        description: req.body.description
+    });
+
+    // save the event
+    event.save((err) => {
+        if(err) {
+            throw err;
+        }
+
+        // redirect to the newly created event
+        res.redirect(`/events/${event.slug}`);
+    });
 }
