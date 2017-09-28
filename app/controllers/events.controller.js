@@ -46,7 +46,8 @@ function showSingle(req, res) {
         // no error
         // return a view with data
         res.render('pages/single', {
-            event: event
+            event: event,
+            success: req.flash('success')
         });
     });
 }
@@ -118,6 +119,9 @@ function processCreate(req, res) {
         if(err) {
             throw err;
         }
+
+        // set a successful flash message
+        req.flash('success', 'Successfully created event!');
 
         // redirect to the newly created event
         res.redirect(`/events/${event.slug}`);
